@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  servidor:
+    image: fjortegan/dwes:laravel
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - "80:80"
+    volumes:
+      - ./ShareVolume:/var/www/html/
+
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d/      
+    environment:
+      MYSQL_DATABASE: ShareVolume
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: pestillo
+      MYSQL_ROOT_PASSWORD: Dbd429fe
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_ARBITRARY=1
