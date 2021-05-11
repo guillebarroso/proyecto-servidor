@@ -114,6 +114,9 @@
       <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/league/flysystem" />
       <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/laravel/sanctum" />
+      <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/pusher/pusher-php-server" />
+      <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/paragonie/random_compat" />
+      <excludeFolder url="file://$MODULE_DIR$/ShareVolume/vendor/paragonie/sodium_compat" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
