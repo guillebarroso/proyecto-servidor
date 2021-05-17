@@ -19,6 +19,10 @@ Route::get('/instrument/images/{filename}', [\App\Http\Controllers\ImageControll
 Route::delete('/instrument/images/delete/{filename}', [\App\Http\Controllers\ImageController::class, 'deleteImage']);
 Route::post('user/images', [\App\Http\Controllers\ImageController::class, 'userImages']);
 
+Route::post('rate/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'rate']);
+Route::post('stars/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'editStars']);
+
+
 
 
 Route::middleware('auth:sanctum')->group(function () {

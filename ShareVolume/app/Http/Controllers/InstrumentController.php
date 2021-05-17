@@ -70,15 +70,17 @@ class InstrumentController extends Controller
         return response()->json($comments, 200);
     }
 
-    public function instrumentCard(Request $request)
+    public function instrumentCard()
     {
         $instruments_cards = DB::table('instruments')
             ->join('users', 'users.id', '=', 'instruments.user_id')
-            ->select('users.nickname', 'users.location', 'instruments.name', 'instruments.description', 'instruments.id')
-//            ->skip(0)
+            ->select('users.id as user_id','users.nickname', 'users.location', 'instruments.name', 'instruments.description', 'instruments.id', 'instruments.image as instrument_image',
+                DB::raw("(select avg(stars) from stars_instruments where liked_instrument_id = instruments.id) as stars"))
+//            ->skip(0) Preguntar a javi si lo de arriba está bien
 //            ->take(3)
             ->orderBy('users.nickname','desc')
             ->get();
+
 
         return response()->json($instruments_cards, 200);
     }

@@ -90,23 +90,34 @@ class AuthController extends Controller
 
     public function userInfo(Request $request)
     {
-        $user_id = $request->input('user_id');
         $instrument_id = $request->input('instrument_id');
 
-        $user_info = DB::table('users')
-            ->where('id', '=', $user_id)
-            ->select('nickname', 'location', 'name')
+        $user_info = DB::table('instruments')
+            ->join('users', 'users.id', '=', 'instruments.user_id')
+            ->where('instruments.id', '=', $instrument_id)
+            ->select('users.nickname', 'users.location', 'users.name as userName', 'users.image as userImage',
+                    'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description')
             ->get();
 
         $comments_info = DB::table('comments_instruments')
-            ->where('user_id', '=', $user_id)
-            ->select('comment')
+            ->join('users', 'users.id', '=', 'comments_instruments.user_id')
+            ->where('comments_instruments.commented_instrument_id', '=', $instrument_id)
+            ->select('comments_instruments.comment', 'users.nickname')
             ->get();
 
         $images = DB::table('images')
             ->where('instrument_id', '=', $instrument_id)
             ->select('image_path')
             ->get();
-        return response()->json([$user_info, $comments_info, $images], 200);
+
+        $count['count']=DB::table('images')
+            ->where('instrument_id', '=', $instrument_id)
+            ->count();
+
+        $stars['stars']=DB::table('stars_instruments')
+            ->where('liked_instrument_id', '=', $instrument_id)
+            ->avg('stars');
+
+        return response()->json([$user_info, $comments_info, $images, [$count], [$stars]], 200);
     }
 }

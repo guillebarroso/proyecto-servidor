@@ -16,7 +16,7 @@ class CreateStarsInstrumentsTable extends Migration
         Schema::create('stars_instruments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
-            $table->Integer('stars');
+            $table->double('stars',5,1);
             $table->bigInteger('liked_instrument_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('liked_instrument_id')->references('id')->on('users')->onDelete('cascade');
