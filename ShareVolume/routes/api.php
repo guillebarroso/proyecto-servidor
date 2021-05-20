@@ -22,6 +22,7 @@ Route::post('user/images', [\App\Http\Controllers\ImageController::class, 'userI
 Route::post('rate/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'rate']);
 Route::post('stars/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'editStars']);
 
+Route::get('images/{id}', [\App\Http\Controllers\ImageController::class, 'getAllImages']);
 
 
 

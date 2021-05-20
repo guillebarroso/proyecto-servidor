@@ -57,4 +57,14 @@ class ImageController extends Controller
 
         return response()->json($images, 200);
     }
+
+    public function getAllImages($id)
+    {
+        $images = DB::table('images')
+            ->where('instrument_id', '=', $id)
+            ->select('image_path')
+            ->get();
+
+        return response()->json($images, 200);
+    }
 }
