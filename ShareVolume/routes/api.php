@@ -19,10 +19,14 @@ Route::get('/instrument/images/{filename}', [\App\Http\Controllers\ImageControll
 Route::delete('/instrument/images/delete/{filename}', [\App\Http\Controllers\ImageController::class, 'deleteImage']);
 Route::post('user/images', [\App\Http\Controllers\ImageController::class, 'userImages']);
 
+Route::get('user/{id}', [\App\Http\Controllers\AuthController::class, 'getUser']);
+
 Route::post('rate/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'rate']);
 Route::post('stars/instruments', [\App\Http\Controllers\StarsInstrumentController::class, 'editStars']);
 
 Route::get('images/{id}', [\App\Http\Controllers\ImageController::class, 'getAllImages']);
+
+
 
 
 

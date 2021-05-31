@@ -44,13 +44,19 @@ class AuthController extends Controller
         $cookie = cookie('jwt', $token, 60 * 24); // 1 day
 
         return response([
-            'message' => $token
+            Auth::user()
         ])->withCookie($cookie);
     }
 
     public function user()
     {
         return Auth::user();
+    }
+
+    public function getUser($id)
+    {
+        $user = DB::table('users')->find($id);;
+        return response()->json([$user], 200);
     }
 
     public function logout()
