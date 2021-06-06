@@ -111,6 +111,9 @@
       <path value="$PROJECT_DIR$/ShareVolume/vendor/pusher/pusher-php-server" />
       <path value="$PROJECT_DIR$/ShareVolume/vendor/paragonie/random_compat" />
       <path value="$PROJECT_DIR$/ShareVolume/vendor/paragonie/sodium_compat" />
+      <path value="$PROJECT_DIR$/ShareVolume/vendor/maximebf/debugbar" />
+      <path value="$PROJECT_DIR$/ShareVolume/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/ShareVolume/vendor/barryvdh/laravel-debugbar" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />

@@ -27,6 +27,8 @@ Route::post('stars/instruments', [\App\Http\Controllers\StarsInstrumentControlle
 Route::get('images/{id}', [\App\Http\Controllers\ImageController::class, 'getAllImages']);
 
 
+Route::post('update/user/{id}', [\App\Http\Controllers\AuthController::class, 'updateUser']);
+Route::post('update/user/image/{id}', [\App\Http\Controllers\AuthController::class, 'updateUserImage']);
 
 
 
@@ -38,12 +40,19 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('instruments', [\App\Http\Controllers\InstrumentController::class, 'showAllInstruments']);
 Route::get('instruments/{id}', [\App\Http\Controllers\InstrumentController::class, 'showOneInstrument']);
 Route::post('add/instrument', [\App\Http\Controllers\InstrumentController::class, 'createInstrument']);
-Route::put('update/instrument/{id}', [\App\Http\Controllers\InstrumentController::class, 'updateInstrument']);
+Route::post('update/instrument/{id}', [\App\Http\Controllers\InstrumentController::class, 'updateInstrument']);
+Route::post('update/instrument/image/{id}', [\App\Http\Controllers\InstrumentController::class, 'updateInstrumentImage']);
 Route::delete('delete/instrument/{id}', [\App\Http\Controllers\InstrumentController::class, 'deleteInstrument']);
 Route::post('comments/instrument', [\App\Http\Controllers\InstrumentController::class, 'instrumentComment']);
 Route::get('instrument/info', [\App\Http\Controllers\InstrumentController::class, 'instrumentCard']);
 Route::post('user/instruments', [\App\Http\Controllers\InstrumentController::class, 'userInstruments']);
 Route::post('user/info', [\App\Http\Controllers\AuthController::class, 'userInfo']);
+
+Route::post('instrument/images', [\App\Http\Controllers\ImageController::class, 'uploadImages']);
+
+
+
+Route::post('instrument/info', [\App\Http\Controllers\InstrumentController::class, 'instrumentInfo']);
 
 
 Route::get('rentedInstrument', [\App\Http\Controllers\RentedInstrumentController::class, 'showAllRentedInstruments']);
@@ -51,11 +60,21 @@ Route::get('rentedInstruments/{id}', [\App\Http\Controllers\RentedInstrumentCont
 Route::post('rent/instrument', [\App\Http\Controllers\RentedInstrumentController::class, 'rentInstrument']);
 Route::put('update/rentedInstrument/{id}', [\App\Http\Controllers\RentedInstrumentController::class, 'updateRentedInstrument']);
 Route::delete('delete/rentedInstrument/{id}', [\App\Http\Controllers\RentedInstrumentController::class, 'deleteRentedInstrument']);
+Route::get('dates/rentedInstrument/{id}', [\App\Http\Controllers\RentedInstrumentController::class, 'datesRentedInstrument']);
+
 
 Route::post('comment/instrument', [\App\Http\Controllers\CommentsInstrumentController::class, 'createComment']);
 
 Route::post('send/message', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
 Route::post('read/message', [\App\Http\Controllers\ChatController::class, 'readMessages']);
+Route::post('chat/create', [\App\Http\Controllers\ChatDetailsController::class, 'createChat']);
+Route::post('chat/info', [\App\Http\Controllers\ChatController::class, 'showUsers']);
+
+Route::post('search/user', [\App\Http\Controllers\AuthController::class, 'search']);
+Route::post('search/instrument', [\App\Http\Controllers\InstrumentController::class, 'search']);
+
+
+
 
 
 

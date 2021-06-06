@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('nickname')->unique();
             $table->string('location');
             $table->string('password');
+            $table->longText('description', 500)->nullable();
             $table->string('image', 255)->nullable();
             $table->timestamps();
         });

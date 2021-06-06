@@ -16,6 +16,14 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        $image_path = $request->file('image');
+        if($image_path){
+            $image_path_name = time().$image_path->getClientOriginalName();
+            Storage::disk('public')->put($image_path_name, File::get($image_path));
+        }
+        else{
+            $image_path_name = 'logoSharevolume.png';
+        }
 
         return User::create([
             'name' => $request->input('name'),
@@ -25,7 +33,8 @@ class AuthController extends Controller
             'nickname' => $request->input('nickname'),
             'location' => $request->input('location'),
             'password' => Hash::make($request->input('password')),
-            'image' => $request->input('image')
+            'description' => $request->input('description'),
+            'image' => $image_path_name
         ]);
     }
 
@@ -55,7 +64,8 @@ class AuthController extends Controller
 
     public function getUser($id)
     {
-        $user = DB::table('users')->find($id);;
+
+        $user = DB::table('users')->select('nickname','name','surname','age', 'location', 'image')->find($id);;
         return response()->json([$user], 200);
     }
 
@@ -96,34 +106,67 @@ class AuthController extends Controller
 
     public function userInfo(Request $request)
     {
-        $instrument_id = $request->input('instrument_id');
+        $user_id = $request->input('user_id');
 
-        $user_info = DB::table('instruments')
-            ->join('users', 'users.id', '=', 'instruments.user_id')
-            ->where('instruments.id', '=', $instrument_id)
-            ->select('users.nickname', 'users.location', 'users.name as userName', 'users.image as userImage',
-                    'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description')
+        $user_info = DB::table('users')
+            ->where('id', '=', $user_id)
+            ->select('nickname', 'location', 'name', 'image', 'age','surname','description')
             ->get();
 
-        $comments_info = DB::table('comments_instruments')
-            ->join('users', 'users.id', '=', 'comments_instruments.user_id')
-            ->where('comments_instruments.commented_instrument_id', '=', $instrument_id)
-            ->select('comments_instruments.comment', 'users.nickname')
+        $comments_info = DB::table('comments_users')
+            ->join('users', 'users.id', '=', 'comments_users.user_id')
+            ->where('comments_users.commented_user_id', '=', $user_id)
+            ->select('comments_users.comment', 'users.nickname')
             ->get();
 
-        $images = DB::table('images')
-            ->where('instrument_id', '=', $instrument_id)
-            ->select('image_path')
+        return response()->json([$user_info, $comments_info], 200);
+    }
+
+    public function updateUser($id, Request $request)
+    {
+        $name = $request->input('name');
+        $age = $request->input('age');
+        $nickname = $request->input('nickname');
+        $location = $request->input('location');
+        $surname = $request->input('surname');
+        $description = $request->input('description');
+        $password = $request->input('password');
+
+        $user = DB::table('users')
+            ->where('id', $id)
+            ->update(['name' => $name, 'age' => $age, 'nickname' => $nickname
+                , 'location' => $location, 'description' => $description, 'surname' => $surname
+                , 'password' => Hash::make($password)]);
+
+        return response()->json($user, 200);
+    }
+
+    public function updateUserImage($id, Request $request)
+    {
+        $image_path = $request->file('image');
+        if($image_path){
+            $image_path_name = time().$image_path->getClientOriginalName();
+            Storage::disk('users')->put($image_path_name, File::get($image_path));
+        }
+
+        DB::table('users')
+            ->where('id', $id)
+            ->update(['image' => $image_path_name]);
+
+        return response()->json($image_path_name, 200);
+    }
+
+    public function search(Request $request)
+    {
+        $word = $request->input('word');
+        $user = DB::table('users')
+            ->where('name', 'like', $word.'%')
+            ->orWhere('surname', 'like', $word.'%')
+            ->orWhere('nickname', 'like', $word.'%')
+            ->orWhere('location', 'like', $word.'%')
+            ->orWhere('description', 'like', $word.'%')
             ->get();
 
-        $count['count']=DB::table('images')
-            ->where('instrument_id', '=', $instrument_id)
-            ->count();
-
-        $stars['stars']=DB::table('stars_instruments')
-            ->where('liked_instrument_id', '=', $instrument_id)
-            ->avg('stars');
-
-        return response()->json([$user_info, $comments_info, $images, [$count], [$stars]], 200);
+        return response()->json($user, 200);
     }
 }

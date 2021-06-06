@@ -19,6 +19,7 @@ class User extends Authenticatable
         'nickname',
         'location',
         'password',
+        'description',
         'image',
 
     ];

@@ -9,6 +9,35 @@ use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
+
+    public function showUsers(Request $request)
+    {
+        $user_id = $request->input('user_id');
+
+//        $chat = DB::table('chats')
+//            ->where('sender_user_id', '=', $user_id)
+//            ->orWhere('reciever_user_id','=',$user_id)
+//            ->select('reciever_user_id', 'sender_user_id')
+//            ->distinct()
+//            ->get();
+
+        $first = DB::table('chats')
+            ->where('sender_user_id', '=', $user_id)
+            ->select('reciever_user_id as user')
+            ->distinct();
+
+        $users = DB::table('chats')
+            ->where('reciever_user_id','=',$user_id)
+            ->select('sender_user_id as user')
+            ->distinct()
+            ->union($first)
+            ->get();
+
+        return response()->json($users, 200);
+
+    }
+
+
     public function sendMessage(Request $request)
     {
 
@@ -40,9 +69,9 @@ class ChatController extends Controller
 
         $chat = DB::table('chats')
             ->where('sender_user_id', '=', $sender_user_id)
-            ->orWhere('sender_user_id','=',$reciever_user_id)
             ->where('reciever_user_id', '=', $reciever_user_id)
-            ->orWhere('reciever_user_id','=',$sender_user_id)
+            ->orWhere('sender_user_id','=',$reciever_user_id)
+            ->Where('reciever_user_id','=',$sender_user_id)
             ->select('message', 'sender_user_id', 'created_at')
             ->orderBy('created_at', 'asc')
             ->get();

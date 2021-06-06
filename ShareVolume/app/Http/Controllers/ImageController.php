@@ -6,7 +6,6 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
@@ -25,6 +24,24 @@ class ImageController extends Controller
         ]);
 
         return response()->json($instrument_image, 200);
+    }
+
+    public function uploadImages(Request $request)
+    {
+        $images_path = $request->file('image_path');
+
+        if($request->hasFile('image_path'))
+        {
+            foreach ($images_path as $image_path) {
+                $image_path_name = time().$image_path->getClientOriginalName();
+                Storage::disk('public')->put($image_path_name, File::get($image_path));
+                Image::create([
+                    'instrument_id' => $request->input('instrument_id'),
+                    'image_path' => $image_path_name
+                ]);
+            }
+        }
+        return response( 200);
     }
 
     public function getImage($filename)
