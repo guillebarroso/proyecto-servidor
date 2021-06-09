@@ -14,21 +14,16 @@ class ChatController extends Controller
     {
         $user_id = $request->input('user_id');
 
-//        $chat = DB::table('chats')
-//            ->where('sender_user_id', '=', $user_id)
-//            ->orWhere('reciever_user_id','=',$user_id)
-//            ->select('reciever_user_id', 'sender_user_id')
-//            ->distinct()
-//            ->get();
-
         $first = DB::table('chats')
+            ->join('users', 'users.id', '=', 'chats.reciever_user_id')
             ->where('sender_user_id', '=', $user_id)
-            ->select('reciever_user_id as user')
+            ->select('chats.reciever_user_id as id' , 'users.name', 'users.nickname')
             ->distinct();
 
         $users = DB::table('chats')
+            ->join('users', 'users.id', '=', 'chats.sender_user_id')
             ->where('reciever_user_id','=',$user_id)
-            ->select('sender_user_id as user')
+            ->select('chats.sender_user_id as id' , 'users.name', 'users.nickname')
             ->distinct()
             ->union($first)
             ->get();
@@ -50,7 +45,7 @@ class ChatController extends Controller
         $sender_user_id = $request->input('sender_user_id');
         $reciever_user_id = $request->input('reciever_user_id');
         $message = $request->input('message');
-        event(new MessageSent($sender_user_id, $reciever_user_id, $message));
+        broadcast(new MessageSent($sender_user_id, $reciever_user_id, $message))->toOthers();
 
         Chat::create([
             'sender_user_id' => $request->input('sender_user_id'),

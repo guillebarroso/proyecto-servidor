@@ -96,13 +96,22 @@ class InstrumentController extends Controller
             ->join('users', 'users.id', '=', 'instruments.user_id')
             ->select('users.id as user_id','users.nickname', 'users.location', 'instruments.name', 'instruments.description', 'instruments.id', 'instruments.image as instrument_image',
                 DB::raw("(select avg(stars) from stars_instruments where liked_instrument_id = instruments.id) as stars"))
-//            ->skip(0) Preguntar a javi si lo de arriba está bien
-//            ->take(3)
             ->orderBy('users.nickname','desc')
             ->get();
 
 
         return response()->json($instruments_cards, 200);
+    }
+
+    public function myInstrumentCard($id)
+    {
+        $instrument = DB::table('instruments')
+            ->where('user_id', $id)
+            ->select('name', 'description', 'id', 'image',
+                DB::raw("(select avg(stars) from stars_instruments where liked_instrument_id = instruments.id) as stars"))
+            ->get();
+
+        return response()->json($instrument, 200);
     }
 
     public function userInstruments(Request $request)
@@ -150,30 +159,27 @@ class InstrumentController extends Controller
             ->join('users', 'users.id', '=', 'instruments.user_id')
             ->where('instruments.id', '=', $instrument_id)
             ->select('users.nickname', 'users.location', 'users.name as userName', 'users.image as userImage',
-                'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description')
+                'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description',
+                DB::raw("(select stars from stars_instruments where liked_instrument_id = instruments.id and users.id = user_id) as stars"))
             ->get();
 
         $comments_info = DB::table('comments_instruments')
             ->join('users', 'users.id', '=', 'comments_instruments.user_id')
             ->where('comments_instruments.commented_instrument_id', '=', $instrument_id)
-            ->select('comments_instruments.comment', 'users.nickname')
+            ->select('comments_instruments.comment', 'users.nickname', 'users.image', 'users.id')
             ->get();
 
-        $images = DB::table('images')
+        $rentedInstrument = DB::table('rented_instruments')
             ->where('instrument_id', '=', $instrument_id)
-            ->select('image_path')
-            ->take(5)
+            ->where('return_date', '>=', date('Y-m-d H:i:s'))
+            ->select('initial_date', 'return_date')
             ->get();
-
-        $count['count']=DB::table('images')
-            ->where('instrument_id', '=', $instrument_id)
-            ->count();
 
         $stars['stars']=DB::table('stars_instruments')
             ->where('liked_instrument_id', '=', $instrument_id)
             ->avg('stars');
 
-        return response()->json([$user_info, $comments_info, $images, [$count], [$stars]], 200);
+        return response()->json([$user_info, $comments_info, $rentedInstrument, [$stars]], 200);
     }
 
     public function search($word)

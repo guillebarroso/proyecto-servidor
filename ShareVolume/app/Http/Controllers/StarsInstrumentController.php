@@ -14,13 +14,28 @@ class StarsInstrumentController extends Controller
 
         $instrument_id = $request->input('liked_instrument_id');
         $user_id = $request->input('user_id');
-        $stars = $request->input('stars');
+        $starsRate = $request->input('stars');
 
-        $starsInstrument = DB::table('stars_instruments')->insert([
-            'user_id' => $user_id,
-            'stars' => $stars,
-            'liked_instrument_id' => $instrument_id
-        ]);
+        $stars = DB::table('stars_instruments')
+            ->where('user_id', $user_id)
+            ->where('liked_instrument_id', $instrument_id)
+            ->count();
+
+        if($stars==0){
+            $starsInstrument = DB::table('stars_instruments')->insert([
+                'user_id' => $user_id,
+                'stars' => $starsRate,
+                'liked_instrument_id' => $instrument_id
+            ]);
+
+        }else{
+            $starsInstrument = DB::table('stars_instruments')
+                ->where('user_id', $user_id)
+                ->where('liked_instrument_id', $instrument_id)
+                ->update(['stars' => $starsRate]);
+        }
+
+
 
         return response()->json($starsInstrument, 200);
 

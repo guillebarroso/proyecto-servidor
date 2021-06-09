@@ -44,7 +44,10 @@ Route::post('update/instrument/{id}', [\App\Http\Controllers\InstrumentControlle
 Route::post('update/instrument/image/{id}', [\App\Http\Controllers\InstrumentController::class, 'updateInstrumentImage']);
 Route::delete('delete/instrument/{id}', [\App\Http\Controllers\InstrumentController::class, 'deleteInstrument']);
 Route::post('comments/instrument', [\App\Http\Controllers\InstrumentController::class, 'instrumentComment']);
-Route::get('instrument/info', [\App\Http\Controllers\InstrumentController::class, 'instrumentCard']);
+
+Route::get('myinstrument/info/{id}', [\App\Http\Controllers\InstrumentController::class, 'myInstrumentCard']);
+Route::get('info/instruments', [\App\Http\Controllers\InstrumentController::class, 'instrumentCard']);
+
 Route::post('user/instruments', [\App\Http\Controllers\InstrumentController::class, 'userInstruments']);
 Route::post('user/info', [\App\Http\Controllers\AuthController::class, 'userInfo']);
 
