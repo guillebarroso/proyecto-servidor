@@ -17,13 +17,13 @@ class ChatController extends Controller
         $first = DB::table('chats')
             ->join('users', 'users.id', '=', 'chats.reciever_user_id')
             ->where('sender_user_id', '=', $user_id)
-            ->select('chats.reciever_user_id as id' , 'users.name', 'users.nickname')
+            ->select('chats.reciever_user_id as id' , 'users.name', 'users.surname', 'users.nickname' ,'users.image', 'users.location')
             ->distinct();
 
         $users = DB::table('chats')
             ->join('users', 'users.id', '=', 'chats.sender_user_id')
             ->where('reciever_user_id','=',$user_id)
-            ->select('chats.sender_user_id as id' , 'users.name', 'users.nickname')
+            ->select('chats.sender_user_id as id' , 'users.name', 'users.surname', 'users.nickname', 'users.image', 'users.location')
             ->distinct()
             ->union($first)
             ->get();
@@ -36,11 +36,6 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
 
-//        $info_mensaje =  Chat::create([
-//            'sender_user_id' => $request->input('sender_user_id'),
-//            'reciever_user_id' => $request->input('reciever_user_id'),
-//            'message' => $request->input('message'),
-//        ]);
 
         $sender_user_id = $request->input('sender_user_id');
         $reciever_user_id = $request->input('reciever_user_id');

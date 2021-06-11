@@ -151,6 +151,27 @@ class InstrumentController extends Controller
         return response($file)->header('Content-type','image/png');
     }
 
+    public function instrumentInfoEdit(Request $request)
+    {
+        $instrument_id = $request->input('instrument_id');
+        $user_id = $request->input('user_id');
+
+        $user_info = DB::table('instruments')
+            ->join('users', 'users.id', '=', 'instruments.user_id')
+            ->where('instruments.id', '=', $instrument_id)
+            ->where('instruments.user_id', '=', $user_id)
+            ->select('users.nickname', 'users.location', 'users.name as userName', 'users.id as userID', 'users.image as userImage',
+                'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description',
+                DB::raw("(select stars from stars_instruments where liked_instrument_id = instruments.id and users.id = user_id) as stars"))
+            ->get();
+
+        if($user_info->isEmpty()){
+            return response('Not found', 404);
+        }
+
+        return response()->json($user_info, 200);
+    }
+
     public function instrumentInfo(Request $request)
     {
         $instrument_id = $request->input('instrument_id');
@@ -158,10 +179,11 @@ class InstrumentController extends Controller
         $user_info = DB::table('instruments')
             ->join('users', 'users.id', '=', 'instruments.user_id')
             ->where('instruments.id', '=', $instrument_id)
-            ->select('users.nickname', 'users.location', 'users.name as userName', 'users.image as userImage',
+            ->select('users.nickname', 'users.location', 'users.name as userName', 'users.id as userID', 'users.image as userImage',
                 'instruments.image as principalImage', 'instruments.name as instrumentName', 'instruments.type', 'instruments.starting_price', 'instruments.description',
                 DB::raw("(select stars from stars_instruments where liked_instrument_id = instruments.id and users.id = user_id) as stars"))
             ->get();
+
 
         $comments_info = DB::table('comments_instruments')
             ->join('users', 'users.id', '=', 'comments_instruments.user_id')

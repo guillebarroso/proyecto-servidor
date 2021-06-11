@@ -35,6 +35,14 @@ Route::post('update/user/image/{id}', [\App\Http\Controllers\AuthController::cla
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [\App\Http\Controllers\AuthController::class, 'user']);
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    Route::delete('delete/user/{id}', [\App\Http\Controllers\AuthController::class, 'deleteUser']);
+    Route::post('user/info', [\App\Http\Controllers\AuthController::class, 'userInfo']);
+    Route::post('chat/info', [\App\Http\Controllers\ChatController::class, 'showUsers']);
+    Route::post('send/message', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
+    Route::post('read/message', [\App\Http\Controllers\ChatController::class, 'readMessages']);
+    Route::post('chat/create', [\App\Http\Controllers\ChatDetailsController::class, 'createChat']);
+    Route::post('instrument/info/edit', [\App\Http\Controllers\InstrumentController::class, 'instrumentInfoEdit']);
+
 });
 
 Route::get('instruments', [\App\Http\Controllers\InstrumentController::class, 'showAllInstruments']);
@@ -49,7 +57,6 @@ Route::get('myinstrument/info/{id}', [\App\Http\Controllers\InstrumentController
 Route::get('info/instruments', [\App\Http\Controllers\InstrumentController::class, 'instrumentCard']);
 
 Route::post('user/instruments', [\App\Http\Controllers\InstrumentController::class, 'userInstruments']);
-Route::post('user/info', [\App\Http\Controllers\AuthController::class, 'userInfo']);
 
 Route::post('instrument/images', [\App\Http\Controllers\ImageController::class, 'uploadImages']);
 
@@ -68,10 +75,8 @@ Route::get('dates/rentedInstrument/{id}', [\App\Http\Controllers\RentedInstrumen
 
 Route::post('comment/instrument', [\App\Http\Controllers\CommentsInstrumentController::class, 'createComment']);
 
-Route::post('send/message', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
-Route::post('read/message', [\App\Http\Controllers\ChatController::class, 'readMessages']);
-Route::post('chat/create', [\App\Http\Controllers\ChatDetailsController::class, 'createChat']);
-Route::post('chat/info', [\App\Http\Controllers\ChatController::class, 'showUsers']);
+
+
 
 Route::post('search/user', [\App\Http\Controllers\AuthController::class, 'search']);
 Route::post('search/instrument', [\App\Http\Controllers\InstrumentController::class, 'search']);

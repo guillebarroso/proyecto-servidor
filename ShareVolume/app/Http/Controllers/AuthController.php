@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -19,13 +20,24 @@ class AuthController extends Controller
         $image_path = $request->file('image');
         if($image_path){
             $image_path_name = time().$image_path->getClientOriginalName();
-            Storage::disk('public')->put($image_path_name, File::get($image_path));
+            Storage::disk('users')->put($image_path_name, File::get($image_path));
         }
         else{
             $image_path_name = 'logoSharevolume.png';
         }
 
-        return User::create([
+        $request->validate([
+            'name' => 'required',
+            'surname' => 'required',
+            'age' => 'required',
+            'email' => 'required|unique:users',
+            'nickname' => 'required|unique:users',
+            'location' => 'required',
+            'password' => ['required', Password::min(8)],
+            'description' => 'required|max:500',
+        ]);
+
+        User::create([
             'name' => $request->input('name'),
             'surname' => $request->input('surname'),
             'age' => $request->input('age'),
@@ -36,6 +48,18 @@ class AuthController extends Controller
             'description' => $request->input('description'),
             'image' => $image_path_name
         ]);
+
+        Auth::attempt($request->only('email', 'password'));
+
+        $user = Auth::user();
+
+        $token = $user->createToken('token')->plainTextToken;
+
+        $cookie = cookie('jwt', $token, 60 * 24); // 1 day
+
+        return response([
+            Auth::user()
+        ])->withCookie($cookie);
     }
 
     public function login(Request $request)
@@ -168,5 +192,16 @@ class AuthController extends Controller
             ->get();
 
         return response()->json($user, 200);
+    }
+
+    public function deleteUser($id)
+    {
+        User::findOrFail($id)->delete();
+
+        $cookie = Cookie::forget('jwt');
+
+        return response([
+            'message' => 'Success'
+        ], 200)->withCookie($cookie);
     }
 }

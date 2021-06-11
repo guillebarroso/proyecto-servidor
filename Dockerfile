@@ -1,4 +1,8 @@
 FROM fjortegan/dwes:laravel
-ADD ./ShareVolume/* /var/www/html
+COPY ./ShareVolume/ /var/www/html
 RUN chown -R www-data:www-data /var/www/html/*
 RUN chown -R www-data:www-data /var/www/html/.*
+
+docker exec -it pruebadocker_servidor_1 bin/bash
+
+php artisan migrate
